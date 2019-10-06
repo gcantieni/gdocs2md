@@ -28,7 +28,8 @@ function ConvertToMarkdown() {
     var result = processParagraph(i, child, inSrc, globalImageCounter, globalListCounters);
     globalImageCounter += (result && result.images) ? result.images.length : 0;
     if (result===null) {
-      text+="\n"
+      text+="\n";
+      continue;
     } else if (result.sourcePretty==="start" && !inSrc) {
       inSrc=true;
       text+="<pre class=\"prettyprint\">\n";
