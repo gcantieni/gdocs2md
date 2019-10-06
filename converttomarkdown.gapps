@@ -27,45 +27,42 @@ function ConvertToMarkdown() {
     var child = DocumentApp.getActiveDocument().getActiveSection().getChild(i);
     var result = processParagraph(i, child, inSrc, globalImageCounter, globalListCounters);
     globalImageCounter += (result && result.images) ? result.images.length : 0;
-    if (result!==null) {
-      if (result.sourcePretty==="start" && !inSrc) {
-        inSrc=true;
-        text+="<pre class=\"prettyprint\">\n";
-      } else if (result.sourcePretty==="end" && inSrc) {
-        inSrc=false;
-        text+="</pre>\n\n";
-      } else if (result.source==="start" && !inSrc) {
-        inSrc=true;
-        text+="<pre>\n";
-      } else if (result.source==="end" && inSrc) {
-        inSrc=false;
-        text+="</pre>\n\n";
-      } else if (result.inClass==="start" && !inClass) {
-        inClass=true;
-        text+="<div class=\""+result.className+"\">\n";
-      } else if (result.inClass==="end" && inClass) {
-        inClass=false;
-        text+="</div>\n\n";
-      } else if (inClass) {
-        text+=result.text+"\n\n";
-      } else if (inSrc) {
-        text+=(srcIndent+escapeHTML(result.text)+"\n");
-      } else if (result.text && result.text.length>0) {
-        text+=result.text+"\n\n";
-      }
-      
-      if (result.images && result.images.length>0) {
-        for (var j=0; j<result.images.length; j++) {
-          attachments.push( {
-            "fileName": result.images[j].name,
-            "mimeType": result.images[j].type,
-            "content": result.images[j].bytes } );
-        }
-      }
-    } else if (inSrc) { // support empty lines inside source code
-      text+='\n';
+    if (result===null) {
+      text+="\n"
+    } else if (result.sourcePretty==="start" && !inSrc) {
+      inSrc=true;
+      text+="<pre class=\"prettyprint\">\n";
+    } else if (result.sourcePretty==="end" && inSrc) {
+      inSrc=false;
+      text+="</pre>\n\n";
+    } else if (result.source==="start" && !inSrc) {
+      inSrc=true;
+      text+="<pre>\n";
+    } else if (result.source==="end" && inSrc) {
+      inSrc=false;
+      text+="</pre>\n\n";
+    } else if (result.inClass==="start" && !inClass) {
+      inClass=true;
+      text+="<div class=\""+result.className+"\">\n";
+    } else if (result.inClass==="end" && inClass) {
+      inClass=false;
+      text+="</div>\n\n";
+    } else if (inClass) {
+      text+=result.text+"\n\n";
+    } else if (inSrc) {
+      text+=(srcIndent+escapeHTML(result.text)+"\n");
+    } else if (result.text && result.text.length>0) {
+      text+=result.text+"\n";
     }
-      
+    
+    if (result.images && result.images.length>0) {
+      for (var j=0; j<result.images.length; j++) {
+        attachments.push( {
+          "fileName": result.images[j].name,
+          "mimeType": result.images[j].type,
+          "content": result.images[j].bytes } );
+      }
+    }
   }
   
   attachments.push({"fileName":DocumentApp.getActiveDocument().getName()+".md", "mimeType": "text/plain", "content": text});
